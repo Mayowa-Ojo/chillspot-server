@@ -14,17 +14,15 @@
       "noImplicitAny": false,
       "experimentalDecorators": true,
       "emitDecoratorMetadata": true,
-      "baseUrl": ".",
+      "baseUrl": "./",
       "paths": {
          "~routes/*": ["src/routes/*"],
          "~utils/*": ["src/utils/*"],
          "~database/*": ["src/database/*"],
          "~config/*": ["src/config/*"],
-         "~types/*": ["src/types/*"],
-         "~models/*": ["src/models/*"],
-         "~middlewares/*": ["src/middlewares/*"],
+         "~declarations/*": ["src/declarations/*"],
+         "~middleware/*": ["src/middleware/*"],
          "~handlers/*": ["src/handlers/*"],
-         "~controllers/*": ["src/controllers/*"],
       }
    },
    "lib": [
