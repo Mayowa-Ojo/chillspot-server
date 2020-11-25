@@ -1,4 +1,3 @@
-import { Context, Next } from "koa";
 import jwt from "koa-jwt";
 
 import { config } from "../config/env.config";
