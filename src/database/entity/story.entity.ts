@@ -21,6 +21,9 @@ export class Story {
    public likes: number
 
    @Prop()
+   public views: number
+
+   @Prop()
    public tags: string[]
 
    @Prop()
