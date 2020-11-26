@@ -1,6 +1,9 @@
-import { Prop, getModelForClass, modelOptions, mongoose } from "@typegoose/typegoose";
+import { Prop, getModelForClass, modelOptions, mongoose, Severity } from "@typegoose/typegoose";
 
-@modelOptions({ schemaOptions: { timestamps: true, collection: "comments"}})
+@modelOptions({ 
+   schemaOptions: { timestamps: true, collection: "comments"},
+   options: { allowMixed: Severity.ALLOW }
+})
 export class Comment {
    @Prop()
    public content: string
@@ -13,6 +16,9 @@ export class Comment {
 
    @Prop()
    public author: mongoose.Types.ObjectId
+
+   @Prop()
+   public story: mongoose.Types.ObjectId
 
    @Prop()
    public replies: mongoose.Types.ObjectId[]
