@@ -10,5 +10,5 @@ const main = async () => {
 }
 
 main().then(() => {
-   console.log(`[INFO]: development sever started. Available at ==> http://lcoalhost:6000/api/v1`);
+   console.log(`[INFO]: development sever started. Available at ==> http://lcoalhost:${config.PORT}/api/v1`);
 });
