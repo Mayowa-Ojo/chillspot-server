@@ -16,7 +16,10 @@ app.use(errorHandler);
 
 app.use(helmet());
 
-app.use(cors());
+app.use(cors({
+   credentials: true,
+   allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE"]
+}));
 
 app.use(logger(winston));
 
