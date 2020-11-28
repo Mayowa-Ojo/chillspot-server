@@ -33,7 +33,7 @@ export const userLogin = async (ctx: Context) => {
 
       const token = utils.GenerateAuthToken({ id: user._id, email: user.email });
 
-      user.hash = "";
+      user.hash = null;
 
       ctx.body = {
          ok: true,
@@ -81,14 +81,19 @@ export const userSignup = async (ctx: Context) => {
 
       const newUser = await userRepository.create(
          { firstname, lastname, email, hash, username }
-      )
+      );
+
+      newUser.hash = null;
+
+      const token = utils.GenerateAuthToken({ id: newUser._id, email: newUser.email });
 
       ctx.body = {
          ok: true,
          status: codes.CREATED,
          message: "resource created",
          data: {
-            user: newUser
+            user: newUser,
+            token
          }
       }
 
