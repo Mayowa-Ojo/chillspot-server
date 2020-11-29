@@ -4,7 +4,7 @@ import bcrypt from "bcrypt";
 import { find } from "~database/repository/user.repository";
 import { config } from "~config/env.config";
 
-export const GenerateUsername = async (
+export const generateUsername = async (
    name: { firstname: string, lastname: string }
 ): Promise<string> => {
    if(!name.firstname || !name.lastname) {
@@ -33,7 +33,7 @@ export const GenerateUsername = async (
    return `${firstname}-${lastname}-${matches}`;
 }
 
-export const GenerateHash = async (password: string): Promise<string> => {
+export const generateHash = async (password: string): Promise<string> => {
    try {
       const hash = await bcrypt.hash(password, 10);
 
@@ -53,7 +53,7 @@ export const verifyPassword = async (password: string, hash: string): Promise<bo
    }
 }
 
-export const GenerateAuthToken = (
+export const generateAuthToken = (
    payload: { id: string, email: string}
 ): string => {
    const options: jwt.SignOptions = {
@@ -73,4 +73,19 @@ export const verifyAuthToken = (token: string): string | object => {
    } catch (err) {
       throw err;
    }
+}
+
+export const generateProfileImage = (): string => {
+   const defaultAvatars = [
+      "https://chillspot-s3-bucket.s3.us-east-2.amazonaws.com/images/avatar-biking.png",
+      "https://chillspot-s3-bucket.s3.us-east-2.amazonaws.com/images/avatar-skiing.png",
+      "https://chillspot-s3-bucket.s3.us-east-2.amazonaws.com/images/avatar-skating.png",
+      "https://chillspot-s3-bucket.s3.us-east-2.amazonaws.com/images/avatar-hiking.png",
+      "https://chillspot-s3-bucket.s3.us-east-2.amazonaws.com/images/avatar-snowboarding.png",
+      "https://chillspot-s3-bucket.s3.us-east-2.amazonaws.com/images/avatar-snowmobile.png",
+   ]
+
+   const randomKey = Math.floor(Math.random()*6);
+
+   return defaultAvatars[randomKey];
 }
