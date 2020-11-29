@@ -40,7 +40,7 @@ export const find = async (
 }
 
 export const create = async (
-   { firstname, lastname, username, email, hash }: Pick<IRepositoryPayload, "firstname" | "lastname" | "username" | "email" | "hash">
+   { firstname, lastname, username, email, hash, avatar }: Pick<IRepositoryPayload, "firstname" | "lastname" | "username" | "email" | "hash" | "avatar">
 ): Promise<DocumentType<User>> => {
    try {
       const instance = new Model;
@@ -49,6 +49,7 @@ export const create = async (
       instance.username = username;
       instance.email = email;
       instance.hash = hash;
+      instance.avatar = avatar;
 
       const user = await instance.save();
 
