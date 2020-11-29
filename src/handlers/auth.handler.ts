@@ -31,7 +31,7 @@ export const userLogin = async (ctx: Context) => {
          ctx.throw(codes.UNAUTHORIZED, "invalid credentials");
       }
 
-      const token = utils.GenerateAuthToken({ id: user._id, email: user.email });
+      const token = utils.generateAuthToken({ id: user._id, email: user.email });
 
       user.hash = null;
 
@@ -71,21 +71,22 @@ export const userSignup = async (ctx: Context) => {
       }
 
       // generate username
-      const username = await utils.GenerateUsername({
+      const username = await utils.generateUsername({
          firstname,
          lastname
       });
 
       // hash password
-      const hash = await utils.GenerateHash(password);
+      const hash = await utils.generateHash(password);
+      const avatar = utils.generateProfileImage();
 
       const newUser = await userRepository.create(
-         { firstname, lastname, email, hash, username }
+         { firstname, lastname, email, hash, username, avatar }
       );
 
       newUser.hash = null;
 
-      const token = utils.GenerateAuthToken({ id: newUser._id, email: newUser.email });
+      const token = utils.generateAuthToken({ id: newUser._id, email: newUser.email });
 
       ctx.body = {
          ok: true,
