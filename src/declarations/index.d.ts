@@ -22,18 +22,23 @@ declare interface IRepositoryPayload {
    email: string
    username: string
    hash: string
-   avatar: string
+   avatar: IImage
    filter: unknown
    title: string
    content: string
    author: mongoose.Types.ObjectId
    location: string
-   thumbnails: string[]
+   thumbnails: IImage[]
    tags: string[]
    projection: unknown
    condition: unknown
    options: any
    query: unknown
+}
+
+declare interface IImage {
+   url: string
+   key: string
 }
 
 declare type AsyncHandler = (ctx: Context) => Promise<void>
