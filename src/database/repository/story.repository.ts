@@ -40,7 +40,8 @@ export const find = async (
 }
 
 export const create = async (
-   { title, content, location, tags, thumbnails }: Pick<IRepositoryPayload, "title" | "content" | "thumbnails" | "tags" | "location">
+   { title, content, location, tags, thumbnails, author }: 
+   Pick<IRepositoryPayload, "title" | "content" | "thumbnails" | "tags" | "location" | "author">
 ): Promise<DocumentType<Story>> => {
    try {
       const instance = new Model;
@@ -49,6 +50,7 @@ export const create = async (
       instance.thumbnails = thumbnails;
       instance.tags = tags;
       instance.location = location;
+      instance.author = author;
 
       const story = await instance.save();
 
