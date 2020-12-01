@@ -1,5 +1,7 @@
 import { Prop, getModelForClass, modelOptions, mongoose, Severity } from "@typegoose/typegoose";
 
+import type { IImage } from "~declarations/index";
+
 @modelOptions({ 
    schemaOptions: { timestamps: true, collection: "users"},
    options: { allowMixed: Severity.ALLOW }
@@ -24,7 +26,7 @@ export class User {
    public bio: string
 
    @Prop()
-   public avatar: string
+   public avatar: IImage
 
    @Prop()
    public followers: mongoose.Types.ObjectId[]

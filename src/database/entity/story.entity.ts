@@ -1,5 +1,7 @@
 import { Prop, getModelForClass, modelOptions, mongoose, Severity } from "@typegoose/typegoose";
 
+import type { IImage } from "~declarations/index.d";
+
 @modelOptions({ 
    schemaOptions: { timestamps: true, collection: "stories"},
    options: { allowMixed: Severity.ALLOW }
@@ -15,7 +17,7 @@ export class Story {
    public location: string
 
    @Prop()
-   public thumbnails: string[]
+   public thumbnails: IImage[]
 
    @Prop()
    public likes: number
