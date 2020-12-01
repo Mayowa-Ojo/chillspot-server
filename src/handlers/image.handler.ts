@@ -3,7 +3,7 @@ import codes from "http-status-codes";
 import util from "util";
 
 import { config } from "~config/env.config";
-import type { AsyncHandler, AsyncUpload } from "../declarations";
+import type { AsyncHandler, AsyncUpload, AsyncDeleteObject } from "../declarations";
 
 const s3 = new Aws.S3({
    credentials: {
@@ -15,6 +15,7 @@ const s3 = new Aws.S3({
 
 
 const asyncUpload: AsyncUpload = util.promisify(s3.upload).bind(s3);
+const asyncDeleteObject: AsyncDeleteObject = util.promisify(s3.deleteObject).bind(s3);
 
 export const uploadFileToBucket: AsyncHandler = async (ctx) => {
    const file = ctx.file;
@@ -39,6 +40,34 @@ export const uploadFileToBucket: AsyncHandler = async (ctx) => {
             url: result.Location,
             key: result.Key
          }
+      }
+   } catch (err) {
+      if(!err.status) {
+         err.status = codes.INTERNAL_SERVER_ERROR;
+         err.message = "something went wrong";
+      }
+      ctx.throw(err.status, err.message);
+   }
+}
+
+export const deleteObjectFromBucket: AsyncHandler = async (ctx) => {
+   try {
+      const objectKey = ctx.request.query["key"];
+
+      if(!objectKey || objectKey === "") {
+         ctx.throw(codes.PRECONDITION_FAILED, "missing/malformed query parameter.");
+      }
+
+      const result = await asyncDeleteObject({
+         Key: objectKey,
+         Bucket: config.AWS_S3_BUCKET
+      });
+
+      ctx.body = {
+         ok: true,
+         status: codes.OK,
+         message: "resource deleted.",
+         data: result
       }
    } catch (err) {
       if(!err.status) {
