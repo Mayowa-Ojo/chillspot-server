@@ -66,6 +66,7 @@ commentRouter.del("/:id", commentHandler.deleteComment);
 
 // images router
 imageRouter.post("/", upload.single("image"), imageHandler.uploadFileToBucket);
+imageRouter.del("/", imageHandler.deleteObjectFromBucket);
 
 v1Router.use("/api/v1", storyRouter.routes(), storyRouter.allowedMethods());
 v1Router.use("/api/v1", authRouter.routes(), authRouter.allowedMethods());
