@@ -60,6 +60,19 @@ export const create = async (
    }
 }
 
+export const insertMany = async (
+   documents: 
+   Pick<IRepositoryPayload, "title" | "content" | "thumbnails" | "tags" | "location" | "author">[]
+): Promise<DocumentType<Story>[]> => {
+   try {
+      const result = await Model.insertMany(documents);
+
+      return result;
+   } catch (err) {
+      throw new Error(err);
+   }
+}
+
 export const updateOne = async (
    { condition, query, options }: Pick<IRepositoryPayload, "condition" | "query" | "options">
 ): Promise<DocumentType<Story>> => {
