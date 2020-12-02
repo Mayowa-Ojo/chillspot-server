@@ -1,4 +1,4 @@
-import { DocumentType } from "@typegoose/typegoose";
+import { DocumentType, mongoose } from "@typegoose/typegoose";
 import type { IRepositoryPayload } from "src/declarations";
 
 import Model, { Comment } from "../entity/comment.entity";
@@ -73,9 +73,21 @@ export const updateOne = async (
 
 export const deleteOne = async (
    { condition }: Pick<IRepositoryPayload, "condition">
-): Promise<Comment> => {
+): Promise<DocumentType<Comment>> => {
    try {
       const result = Model.findOneAndDelete(condition);
+
+      return result;
+   } catch (err) {
+      throw new Error(err);
+   }
+}
+
+export const deleteMany = async (
+   { condition }: Pick<IRepositoryPayload, "condition">
+): Promise<mongoose.Query<{}>> => {
+   try {
+      const result = Model.deleteMany(condition);
 
       return result;
    } catch (err) {

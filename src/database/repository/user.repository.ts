@@ -1,4 +1,4 @@
-import { DocumentType } from "@typegoose/typegoose";
+import { DocumentType, mongoose } from "@typegoose/typegoose";
 import type { IRepositoryPayload } from "src/declarations";
 
 import Model, { User } from "../entity/user.entity";
@@ -68,6 +68,32 @@ export const updateOne = async (
          query,
          { ...options, new: true, useFindAndModify: false }
       );
+
+      return result;
+   } catch (err) {
+      throw new Error(err);
+   }
+}
+
+export const deleteOne = async (
+   { id }: Pick<IRepositoryPayload, "id">
+): Promise<DocumentType<User>> => {
+   try {
+      const result = Model.findOneAndDelete({
+         _id: id
+      });
+
+      return result;
+   } catch (err) {
+      throw new Error(err);
+   }
+}
+
+export const deleteMany = async (
+   { condition }: Pick<IRepositoryPayload, "condition">
+): Promise<mongoose.Query<{}>> => {
+   try {
+      const result = Model.deleteMany(condition);
 
       return result;
    } catch (err) {
