@@ -54,10 +54,10 @@ userRouter.patch("/:id/unfollow", requiresAuth(), userHandler.unfollowUser);
 userRouter.get("/:id/liked-stories", requiresAuth(), userHandler.getLikedStories);
 userRouter.get("/:id/collection", requiresAuth(), userHandler.getCollectionForUser);
 userRouter.get("/:id/stories", requiresAuth(), userHandler.getStoriesByUser);
-userRouter.patch("/:id", userHandler.updateProfile);
-userRouter.patch("/:id/reset-password", userHandler.changePassword);
-userRouter.del("/:id", userHandler.deleteAccount);
-userRouter.del("/:id/avatar", userHandler.deleteProfileImage);
+userRouter.patch("/:id", requiresAuth(), userHandler.updateProfile);
+userRouter.patch("/:id/reset-password", requiresAuth(), userHandler.changePassword);
+userRouter.del("/:id", requiresAuth(), userHandler.deleteAccount);
+userRouter.del("/:id/avatar", requiresAuth(), userHandler.deleteProfileImage);
 
 // comments router
 commentRouter.get("/", requiresAuth(), commentHandler.getCommentsForStory);
