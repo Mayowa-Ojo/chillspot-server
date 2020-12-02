@@ -2,7 +2,7 @@ import codes from "http-status-codes";
 import type { AsyncHandler } from "../declarations/index.d";
 
 import * as storyRepository from "~database/repository/story.repository";
-import * as userRepository from "~database/repository/story.repository";
+import * as userRepository from "~database/repository/user.repository";
 
 export const getFeedForUser: AsyncHandler = async (ctx) => {
    try {
@@ -106,15 +106,32 @@ export const createStory: AsyncHandler = async (ctx) => {
       const requestBody = ctx.request.body;
       const requiredFields = ["title", "content", "location", "thumbnails", "tags"];
       const isValid = requiredFields.every(field => field in requestBody);
+      const { user: { id: userId }} = ctx.state;
 
       if(!isValid) {
          ctx.throw(codes.PRECONDITION_FAILED, "missing fields.");
       }
 
+      const user = await userRepository.findById({
+         id: userId,
+         projection: null,
+         filter: {}
+      });
+
       const { title, content, location, thumbnails, tags } = requestBody;
 
       const story = await storyRepository.create({
-         title, content, location, thumbnails, tags
+         title, content, location, thumbnails, tags, author: user._id
+      });
+
+      await userRepository.updateOne({
+         condition: { _id: user._id },
+         query: {
+            $push: {
+               stories: story._id
+            }
+         },
+         options: {}
       });
 
       ctx.body = {
