@@ -6,7 +6,11 @@ export const connectDB = async () => {
    try {
       const { MONGO_URI, DB_NAME } = config;
 
-      await mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
+      await mongoose.connect(MONGO_URI, { 
+         useNewUrlParser: true,
+         useUnifiedTopology: true,
+         useCreateIndex: true
+      });
 
       console.log(`[INFO] --mongoose: connected to database ${DB_NAME}`);
    } catch(err) {
