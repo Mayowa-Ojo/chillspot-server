@@ -1,5 +1,5 @@
 import { DocumentType, mongoose } from "@typegoose/typegoose";
-import type { IRepositoryPayload } from "src/declarations";
+import type { IAggregationStage, IRepositoryPayload } from "src/declarations";
 
 import Model, { Story } from "../entity/story.entity";
 
@@ -40,8 +40,8 @@ export const find = async (
 }
 
 export const create = async (
-   { title, content, location, tags, thumbnails, author }: 
-   Pick<IRepositoryPayload, "title" | "content" | "thumbnails" | "tags" | "location" | "author">
+   { title, content, location, tags, thumbnails, author, slug }: 
+   Pick<IRepositoryPayload, "title" | "content" | "thumbnails" | "tags" | "location" | "author" | "slug">
 ): Promise<DocumentType<Story>> => {
    try {
       const instance = new Model;
@@ -51,6 +51,7 @@ export const create = async (
       instance.tags = tags;
       instance.location = location;
       instance.author = author;
+      instance.slug = slug;
 
       const story = await instance.save();
 
@@ -106,6 +107,18 @@ export const deleteMany = async (
 ): Promise<mongoose.Query<{}>> => {
    try {
       const result = Model.deleteMany(condition);
+
+      return result;
+   } catch (err) {
+      throw new Error(err);
+   }
+}
+
+export const buildAggregationPipeline = async (
+   pipeline: IAggregationStage[]
+): Promise<DocumentType<Story>[]> => {
+   try {
+      const result = await Model.aggregate(pipeline);
 
       return result;
    } catch (err) {
