@@ -8,19 +8,19 @@ import type { IImage } from "~declarations/index";
 })
 export class User {
    @Prop()
-   public firstname: string
+   public firstname!: string
 
    @Prop()
-   public lastname: string
+   public lastname!: string
+
+   @Prop({ unique: true })
+   public username!: string
 
    @Prop()
-   public username: string
+   public email!: string
 
    @Prop()
-   public email: string
-
-   @Prop()
-   public hash: string
+   public hash!: string
 
    @Prop()
    public bio: string

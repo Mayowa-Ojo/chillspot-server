@@ -8,31 +8,34 @@ import type { IImage } from "~declarations/index.d";
 })
 export class Story {
    @Prop()
-   public title: string
+   public title!: string
 
    @Prop()
-   public content: string
+   public content!: string
+
+   @Prop({ unique: true })
+   public slug!: string
 
    @Prop()
-   public location: string
+   public location!: string
 
    @Prop()
-   public thumbnails: IImage[]
+   public thumbnails!: IImage[]
 
-   @Prop()
+   @Prop({ default: 0 })
    public likes: number
 
-   @Prop()
+   @Prop({ default: 0})
    public views: number
 
    @Prop()
-   public tags: string[]
+   public tags!: string[]
 
    @Prop()
    public comments: mongoose.Types.ObjectId[]
 
    @Prop()
-   public author: mongoose.Types.ObjectId
+   public author!: mongoose.Types.ObjectId
 }
 
 const model = getModelForClass(Story);

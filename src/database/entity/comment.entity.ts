@@ -6,19 +6,19 @@ import { Prop, getModelForClass, modelOptions, mongoose, Severity } from "@typeg
 })
 export class Comment {
    @Prop()
-   public content: string
+   public content!: string
 
-   @Prop()
+   @Prop({ default: 0 })
    public likes: number
 
-   @Prop()
+   @Prop({ default: 0 })
    public dislikes: number
 
    @Prop()
-   public author: mongoose.Types.ObjectId
+   public author!: mongoose.Types.ObjectId
 
    @Prop()
-   public story: mongoose.Types.ObjectId
+   public story!: mongoose.Types.ObjectId
 
    @Prop()
    public replies: mongoose.Types.ObjectId[]
