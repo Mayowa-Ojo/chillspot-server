@@ -1,0 +1,88 @@
+{
+   "stories": [
+      { 
+         "title": "Banff National Park",
+         "location": "Alberta, Canada",
+         "content": "[{\"type\":\"paragraph\",\"children\":[{\"text\":\"National Monument, located in the historical centre of the city, classified as World Heritage Site by \"},{\"text\":\"UNESCO\",\"bold\":true},{\"text\":\", the \"},{\"text\":\"Palacio da Bolsa\",\"italic\":true},{\"text\":\", built by the Porto Commercial Association on the ruins of the Saint Francis Convent, has become by excellence the Porto city’s drawing room, welcoming the most illustrious visitors, amongst which are monarchs, presidents and ministers from almost every country, transforming this building into the most visited monument in northern Portugal.\"}]}]",
+         "thumbnails": [
+            {
+               "url": "https://chillspot-s3-bucket.s3.us-east-2.amazonaws.com/images/banff-alberta-canada-0.jpg-f76euuJ6r",
+               "key": "images/banff-alberta-canada-0.jpg-f76euuJ6r"
+            },
+            {
+               "url": "https://chillspot-s3-bucket.s3.us-east-2.amazonaws.com/images/banff-alberta-canada-1.jpg-hW7rX11eZ",
+               "key": "images/banff-alberta-canada-1.jpg-hW7rX11eZ"
+            },
+            {
+               "url": "https://chillspot-s3-bucket.s3.us-east-2.amazonaws.com/images/banff-alberta-canada-2.jpg-RNXj_XsGi",
+               "key": "images/banff-alberta-canada-2.jpg-RNXj_XsGi"
+            }
+         ],
+         "tags": ["park", "mountain"],
+         "author": "5fc70c796155600d5e0587e0"
+      },
+      { 
+         "title": "Bali",
+         "location": "Bali, Indonesia",
+         "content": "[{\"type\":\"paragraph\",\"children\":[{\"text\":\"National Monument, located in the historical centre of the city, classified as World Heritage Site by \"},{\"text\":\"UNESCO\",\"bold\":true},{\"text\":\", the \"},{\"text\":\"Palacio da Bolsa\",\"italic\":true},{\"text\":\", built by the Porto Commercial Association on the ruins of the Saint Francis Convent, has become by excellence the Porto city’s drawing room, welcoming the most illustrious visitors, amongst which are monarchs, presidents and ministers from almost every country, transforming this building into the most visited monument in northern Portugal.\"}]}]",
+         "thumbnails": [
+            {
+               "url": "https://chillspot-s3-bucket.s3.us-east-2.amazonaws.com/images/bali-indonesia-0.jpg-OmmClbNMv",
+               "key": "images/bali-indonesia-0.jpg-OmmClbNMv"
+            },
+            {
+               "url": "https://chillspot-s3-bucket.s3.us-east-2.amazonaws.com/images/bali-indonesia-1.jpg-2ebqf9x9-",
+               "key": "images/bali-indonesia-1.jpg-2ebqf9x9-"
+            },
+            {
+               "url": "https://chillspot-s3-bucket.s3.us-east-2.amazonaws.com/images/bali-indonesia-2.jpg-wke956HHc",
+               "key": "images/bali-indonesia-2.jpg-wke956HHc"
+            }
+         ],
+         "tags": ["beach", "resort"],
+         "author": "5fc70c796155600d5e0587e0"
+      },
+      { 
+         "title": "Mt. Pulag National Park",
+         "location": "Luzon, Philippines",
+         "content": "[{\"type\":\"paragraph\",\"children\":[{\"text\":\"National Monument, located in the historical centre of the city, classified as World Heritage Site by \"},{\"text\":\"UNESCO\",\"bold\":true},{\"text\":\", the \"},{\"text\":\"Palacio da Bolsa\",\"italic\":true},{\"text\":\", built by the Porto Commercial Association on the ruins of the Saint Francis Convent, has become by excellence the Porto city’s drawing room, welcoming the most illustrious visitors, amongst which are monarchs, presidents and ministers from almost every country, transforming this building into the most visited monument in northern Portugal.\"}]}]",
+         "thumbnails": [
+            {
+               "url": "https://chillspot-s3-bucket.s3.us-east-2.amazonaws.com/images/luzon-philippines-0.jpg-dmRK6jyAc",
+               "key": "images/luzon-philippines-0.jpg-dmRK6jyAc"
+            },
+            {
+               "url": "https://chillspot-s3-bucket.s3.us-east-2.amazonaws.com/images/luzon-philippines-1.jpg-hAPtFpyLM",
+               "key": "images/luzon-philippines-1.jpg-hAPtFpyLM"
+            },
+            {
+               "url": "https://chillspot-s3-bucket.s3.us-east-2.amazonaws.com/images/luzon-philippines-2.jpg-wqCBETOVo",
+               "key": "images/luzon-philippines-2.jpg-wqCBETOVo"
+            }
+         ],
+         "tags": ["Mountain", "Park", "Museum"],
+         "author": "5fc70d426155600d5e0587e1"
+      },
+      { 
+         "title": "Palacio da Bolsa",
+         "location": "Porto, Portugal",
+         "content": "[{\"type\":\"paragraph\",\"children\":[{\"text\":\"National Monument, located in the historical centre of the city, classified as World Heritage Site by \"},{\"text\":\"UNESCO\",\"bold\":true},{\"text\":\", the \"},{\"text\":\"Palacio da Bolsa\",\"italic\":true},{\"text\":\", built by the Porto Commercial Association on the ruins of the Saint Francis Convent, has become by excellence the Porto city’s drawing room, welcoming the most illustrious visitors, amongst which are monarchs, presidents and ministers from almost every country, transforming this building into the most visited monument in northern Portugal.\"}]}]",
+         "thumbnails": [
+            {
+               "url": "https://chillspot-s3-bucket.s3.us-east-2.amazonaws.com/images/porto-portugal-0.jpg-rEX_Og2Bs",
+               "key": "images/porto-portugal-0.jpg-rEX_Og2Bs"
+            },
+            {
+               "url": "https://chillspot-s3-bucket.s3.us-east-2.amazonaws.com/images/porto-portugal-1.jpg-cYyVJKlpG",
+               "key": "images/porto-portugal-1.jpg-cYyVJKlpG"
+            },
+            {
+               "url": "https://chillspot-s3-bucket.s3.us-east-2.amazonaws.com/images/porto-portugal-2.jpg-nfbLeqVXZ",
+               "key": "images/porto-portugal-2.jpg-nfbLeqVXZ"
+            }
+         ],
+         "tags": ["Resort", "Museum"],
+         "author": "5fc70d426155600d5e0587e1"
+      }
+   ]
+}
