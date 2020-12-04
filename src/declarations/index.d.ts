@@ -29,6 +29,7 @@ declare interface IRepositoryPayload {
    author: mongoose.Types.ObjectId
    location: string
    thumbnails: IImage[]
+   slug: string
    tags: string[]
    projection: unknown
    condition: unknown
@@ -39,6 +40,10 @@ declare interface IRepositoryPayload {
 declare interface IImage {
    url: string
    key: string
+}
+
+declare interface IAggregationStage {
+   [stage: string]: unknown
 }
 
 declare type AsyncHandler = (ctx: Context) => Promise<void>
