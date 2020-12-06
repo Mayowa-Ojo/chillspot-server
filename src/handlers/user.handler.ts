@@ -38,6 +38,39 @@ export const getUserProfile: AsyncHandler = async (ctx) => {
    }
 }
 
+export const getUserByUsername: AsyncHandler = async (ctx) => {
+   try {
+      let username = ctx.request.query["q"];
+
+      if(!username || username == "") {
+         ctx.throw(codes.BAD_REQUEST, "missing/malformed request query");
+      }
+
+      const user = await userRepository.findOne({
+         condition: {
+            username
+         },
+         projection: { "hash": 0 },
+         filter: {}
+      });
+
+      ctx.body = {
+         ok: true,
+         status: codes.OK,
+         message: "resources found.",
+         data: {
+            user
+         }
+      }
+   } catch (err) {
+      if(err.status || err.statusCode) {
+         ctx.throw(err.status || err.statusCode, err.message);
+      }
+
+      ctx.throw(codes.INTERNAL_SERVER_ERROR, "something went wrong.");
+   }
+}
+
 export const getFollowersForUser: AsyncHandler = async (ctx) => {
    try {
       let userId = ctx.params["id"];
@@ -139,7 +172,7 @@ export const getLikedStories: AsyncHandler = async (ctx) => {
       const stories = await storyRepository.find({
          condition: {
             _id: {
-               $in: user.likedStories
+               $in: user.likes
             }
          },
          projection: null,
@@ -151,7 +184,7 @@ export const getLikedStories: AsyncHandler = async (ctx) => {
          status: codes.OK,
          message: "resources found.",
          data: {
-            stories
+            likes: stories
          }
       }
    } catch (err) {
@@ -163,7 +196,7 @@ export const getLikedStories: AsyncHandler = async (ctx) => {
    }
 }
 
-export const getCollectionForUser: AsyncHandler = async (ctx) => {
+export const getCollectionsForUser: AsyncHandler = async (ctx) => {
    try {
       let userId = ctx.params["id"];
 
@@ -177,7 +210,7 @@ export const getCollectionForUser: AsyncHandler = async (ctx) => {
          filter: {}
       });
 
-      const collection = await storyRepository.find({
+      const collections = await storyRepository.find({
          condition: {
             _id: {
                $in: user.collections
@@ -192,7 +225,53 @@ export const getCollectionForUser: AsyncHandler = async (ctx) => {
          status: codes.OK,
          message: "resources found.",
          data: {
-            collection
+            collections
+         }
+      }
+   } catch (err) {
+      if(err.status || err.statusCode) {
+         ctx.throw(err.status || err.statusCode, err.message);
+      }
+
+      ctx.throw(codes.INTERNAL_SERVER_ERROR, "something went wrong.");
+   }
+}
+
+export const getArchiveForUser: AsyncHandler = async (ctx) => {
+   try {
+      const userId = ctx.params["id"];
+      const authorizedUser = ctx.state.user;
+
+      if(!userId) {
+         ctx.throw(codes.BAD_REQUEST, "missing request parameter");
+      }
+
+      if(userId !== authorizedUser.id) {
+         ctx.throw(codes.FORBIDDEN, "client is not authorized")
+      }
+
+      const user = await userRepository.findById({
+         id: userId,
+         projection: null,
+         filter: {}
+      });
+
+      const archive = await storyRepository.find({
+         condition: {
+            _id: {
+               $in: user.archive
+            }
+         },
+         projection: null,
+         filter: {}
+      });
+
+      ctx.body = {
+         ok: true,
+         status: codes.OK,
+         message: "resources found.",
+         data: {
+            archive
          }
       }
    } catch (err) {
@@ -212,15 +291,9 @@ export const getStoriesByUser: AsyncHandler = async (ctx) => {
          ctx.throw(codes.BAD_REQUEST, "missing request parameter");
       }
 
-      const user = await userRepository.findById({
-         id: userId,
-         projection: null,
-         filter: {}
-      });
-
       const stories = await storyRepository.find({
          condition: {
-            author: user._id
+            author: userId
          },
          projection: null,
          filter: {}
