@@ -22,7 +22,7 @@ export class User {
    @Prop()
    public hash!: string
 
-   @Prop()
+   @Prop({ default: "Hi! I'm new to chillspot"})
    public bio: string
 
    @Prop()
@@ -41,8 +41,10 @@ export class User {
    public stories: mongoose.Types.ObjectId[]
 
    @Prop()
-   public likedStories: mongoose.Types.ObjectId[]
+   public likes: mongoose.Types.ObjectId[]
 
+   @Prop()
+   public archive: mongoose.Types.ObjectId[]
 }
 
 const model = getModelForClass(User);
