@@ -1,5 +1,7 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
+import { nanoid } from "nanoid";
+import { mongoose } from "@typegoose/typegoose";
 
 import { find } from "~database/repository/user.repository";
 import { config } from "~config/env.config";
@@ -90,3 +92,9 @@ export const generateProfileImage = (): IImage => {
 
    return defaultAvatars[randomKey];
 }
+
+export const castToObjectId = (id: string) => {
+   return mongoose.Types.ObjectId(id);
+}
+
+export const slugify = (s: string): string => `${nanoid(10)}-${s.split(" ").join("-")}`;
