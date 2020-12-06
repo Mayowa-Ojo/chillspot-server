@@ -1,6 +1,6 @@
 import * as Aws from "aws-sdk";
 import codes from "http-status-codes";
-import shortid from "shortid";
+import { nanoid } from "nanoid";
 import util from "util";
 
 import { config } from "~config/env.config";
@@ -20,7 +20,7 @@ const asyncDeleteObject: AsyncDeleteObject = util.promisify(s3.deleteObject).bin
 
 export const uploadFileToBucket: AsyncHandler = async (ctx) => {
    const file = ctx.file;
-   const shortId = shortid.generate();
+   const shortId = nanoid(10);
 
    if(!file) {
       ctx.throw(codes.BAD_REQUEST, "missing/malformed form data.");
