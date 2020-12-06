@@ -47,14 +47,16 @@ authRouter.post("/login", authHandler.userLogin);
 authRouter.post("/signup", authHandler.userSignup);
 
 // users router
+userRouter.get("/username", requiresAuth(), userHandler.getUserByUsername);
 userRouter.get("/:id", requiresAuth(), userHandler.getUserProfile);
 userRouter.get("/:id/followers", requiresAuth(), userHandler.getFollowersForUser);
 userRouter.get("/:id/following", requiresAuth(), userHandler.getFollowingForUser);
 userRouter.patch("/:id/follow", requiresAuth(), userHandler.followUser);
 userRouter.patch("/:id/unfollow", requiresAuth(), userHandler.unfollowUser);
-userRouter.get("/:id/liked-stories", requiresAuth(), userHandler.getLikedStories);
-userRouter.get("/:id/collection", requiresAuth(), userHandler.getCollectionForUser);
+userRouter.get("/:id/likes", requiresAuth(), userHandler.getLikedStories);
+userRouter.get("/:id/collections", requiresAuth(), userHandler.getCollectionsForUser);
 userRouter.get("/:id/stories", requiresAuth(), userHandler.getStoriesByUser);
+userRouter.get("/:id/archive", requiresAuth(), userHandler.getArchiveForUser);
 userRouter.patch("/:id", requiresAuth(), userHandler.updateProfile);
 userRouter.patch("/:id/reset-password", requiresAuth(), userHandler.changePassword);
 userRouter.del("/:id", requiresAuth(), userHandler.deleteAccount);
