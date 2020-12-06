@@ -1,5 +1,5 @@
 import { DocumentType, mongoose } from "@typegoose/typegoose";
-import type { IRepositoryPayload } from "src/declarations";
+import type { IAggregationStage, IRepositoryPayload } from "src/declarations";
 
 import Model, { User } from "../entity/user.entity";
 
@@ -94,6 +94,18 @@ export const deleteMany = async (
 ): Promise<mongoose.Query<{}>> => {
    try {
       const result = Model.deleteMany(condition);
+
+      return result;
+   } catch (err) {
+      throw new Error(err);
+   }
+}
+
+export const buildAggregationPipeline = async (
+   pipeline: IAggregationStage[]
+): Promise<DocumentType<User>[]> => {
+   try {
+      const result = await Model.aggregate(pipeline);
 
       return result;
    } catch (err) {
