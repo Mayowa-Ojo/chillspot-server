@@ -3,14 +3,18 @@ import type { AsyncHandler } from "../declarations/index.d";
 
 import * as storyRepository from "~database/repository/story.repository";
 import * as userRepository from "~database/repository/user.repository";
+import { slugify } from "~utils/index";
 
 export const getFeedForUser: AsyncHandler = async (ctx) => {
    try {
-      const stories = await storyRepository.find({
-         condition: {},
-         projection: null,
-         filter: {} // limit, sort
-      });
+      const stories = await storyRepository.buildAggregationPipeline([
+         {
+            $lookup: { from: "users", localField: "author", foreignField: "_id", as: "author"}
+         },
+         {
+            $unwind: "$author"
+         }
+      ]);
 
       ctx.body = {
          ok: true,
@@ -101,6 +105,49 @@ export const getStory: AsyncHandler = async (ctx) => {
    }
 }
 
+export const getStoryBySlug: AsyncHandler = async (ctx) => {
+   try {
+      const slug = ctx.request.query["slug"];
+
+      if(!slug || slug == "") {
+         ctx.throw(codes.PRECONDITION_FAILED, "missing/malformed request parameter");
+      }
+
+      const [story] = await storyRepository.buildAggregationPipeline([
+         {
+            $match: { slug }
+         },
+         {
+            $lookup: { from: "users", localField: "author", foreignField: "_id", as: "author" }
+         },
+         {
+            $unwind: "$author"
+         }
+      ])
+
+      if(!story) {
+         ctx.throw(codes.NOT_FOUND, "resource not found");
+      }
+
+      await countViews({ slug });
+
+      ctx.body = {
+         ok: true,
+         status: codes.OK,
+         message: "resource found",
+         data: {
+            story
+         }
+      }
+   } catch (err) {
+      if(err.status || err.statusCode) {
+         ctx.throw(err.status || err.statusCode, err.message);
+      }
+
+      ctx.throw(codes.INTERNAL_SERVER_ERROR, "something went wrong");
+   }
+}
+
 export const createStory: AsyncHandler = async (ctx) => {
    try {
       const requestBody = ctx.request.body;
@@ -120,8 +167,10 @@ export const createStory: AsyncHandler = async (ctx) => {
 
       const { title, content, location, thumbnails, tags } = requestBody;
 
+      const slug = slugify(title);
+
       const story = await storyRepository.create({
-         title, content, location, thumbnails, tags, author: user._id
+         title, content, location, thumbnails, tags, slug, author: user._id
       });
 
       await userRepository.updateOne({
@@ -288,12 +337,10 @@ export const deleteStory: AsyncHandler = async (ctx) => {
    }
 }
 
-export const countViews: AsyncHandler = async (ctx) => {
+export const countViews = async (condition) => {
    try {
-      const storyId = ctx.params["id"];
-
       await storyRepository.updateOne({
-         condition: { _id: storyId },
+         condition,
          query: {
             $inc: {
                views: 1
@@ -303,10 +350,6 @@ export const countViews: AsyncHandler = async (ctx) => {
       });
 
    } catch (err) {
-      if(err.status || err.statusCode) {
-         ctx.throw(err.status || err.statusCode, err.message);
-      }
-
-      ctx.throw(codes.INTERNAL_SERVER_ERROR, "something went wrong");
+      throw new Error(err.message)
    }
 }
