@@ -3,7 +3,7 @@ import type { AsyncHandler } from "../declarations/index.d";
 
 import * as storyRepository from "~database/repository/story.repository";
 import * as userRepository from "~database/repository/user.repository";
-import { slugify } from "~utils/index";
+import { castToObjectId, slugify } from "~utils/index";
 
 export const getFeedForUser: AsyncHandler = async (ctx) => {
    try {
@@ -203,8 +203,9 @@ export const createStory: AsyncHandler = async (ctx) => {
 export const likeStory: AsyncHandler = async (ctx) => {
    try {
       const storyId = ctx.params["id"];
+      const userId = ctx.state.user.id;
 
-      const result = await storyRepository.updateOne({
+      await storyRepository.updateOne({
          condition: { _id: storyId },
          query: {
             $inc: {
@@ -214,12 +215,37 @@ export const likeStory: AsyncHandler = async (ctx) => {
          options: {}
       });
 
+      const [story] = await storyRepository.buildAggregationPipeline([
+         {
+            $match: { _id: castToObjectId(storyId)}
+         },
+         {
+            $lookup: { from: "users", localField: "author", foreignField: "_id", as: "author"}
+         },
+         {
+            $unwind: "$author"
+         }
+      ]);
+
+      const user = await userRepository.updateOne({
+         condition: { _id: userId },
+         query: {
+            $push: {
+               likes: storyId
+            }
+         },
+         options: {
+            projection: { hash: 0 }
+         }
+      });
+
       ctx.body = {
          ok: true,
          status: codes.OK,
          message: "resource updated.",
          data: {
-            story: result
+            story,
+            user
          }
       }
    } catch (err) {
@@ -234,12 +260,23 @@ export const likeStory: AsyncHandler = async (ctx) => {
 export const unlikeStory: AsyncHandler = async (ctx) => {
    try {
       const storyId = ctx.params["id"];
+      const userId = ctx.state.user.id;
 
-      const result = await storyRepository.updateOne({
+      const story = await storyRepository.updateOne({
          condition: { _id: storyId },
          query: {
             $inc: {
                likes: -1
+            }
+         },
+         options: {}
+      });
+
+      const user = await userRepository.updateOne({
+         condition: { _id: userId },
+         query: {
+            $pull: {
+               likes: storyId
             }
          },
          options: {}
@@ -250,7 +287,8 @@ export const unlikeStory: AsyncHandler = async (ctx) => {
          status: codes.OK,
          message: "resource updated.",
          data: {
-            story: result
+            story,
+            user
          }
       }
    } catch (err) {
@@ -275,7 +313,7 @@ export const addStoryToCollection: AsyncHandler = async (ctx) => {
          ctx.throw(codes.UNAUTHORIZED, "user is not authenticated.")
       }
 
-      const result = await userRepository.updateOne({
+      const user = await userRepository.updateOne({
          condition: { _id: userId },
          query: {
             $push: {
@@ -290,7 +328,7 @@ export const addStoryToCollection: AsyncHandler = async (ctx) => {
          status: codes.OK,
          message: "resource updated.",
          data: {
-            story: result
+            user
          }
       }
    } catch (err) {
