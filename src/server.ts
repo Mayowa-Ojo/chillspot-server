@@ -8,5 +8,5 @@ void async function() {
 
    app.listen(config.PORT);
 
-   console.log(`[INFO]: ${process.env.NODE_ENV} sever started. Available at ==> http://lcoalhost:${config.PORT}/api/v1`);
+   console.log(`[INFO]: ${process.env.NODE_ENV} sever started. Available at ==> http://localhost:${config.PORT}/api/v1`);
 }();
