@@ -27,6 +27,7 @@ declare interface IRepositoryPayload {
    title: string
    content: string
    author: mongoose.Types.ObjectId
+   story: mongoose.Types.ObjectId
    location: string
    thumbnails: IImage[]
    slug: string
