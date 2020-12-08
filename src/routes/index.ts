@@ -35,9 +35,9 @@ const imageRouter = new Router({
 storyRouter.get("/feed", requiresAuth(), storyHandler.getFeedForUser);
 storyRouter.get("/slug", requiresAuth(), storyHandler.getStoryBySlug);
 storyRouter.get("/:id", requiresAuth(), storyHandler.getStory);
+storyRouter.get("/:id/comments", requiresAuth(), storyHandler.getCommentsForStory);
 storyRouter.get("/search", storyHandler.searchStories);
 storyRouter.patch("/:id/like", requiresAuth(), storyHandler.likeStory);
-storyRouter.patch("/:id/unlike", requiresAuth(), storyHandler.unlikeStory);
 storyRouter.patch("/:id/save", requiresAuth(), storyHandler.addStoryToCollection);
 storyRouter.post("/", requiresAuth(), storyHandler.createStory);
 storyRouter.del("/:id", requiresAuth(), storyHandler.deleteStory);
@@ -63,13 +63,12 @@ userRouter.del("/:id", requiresAuth(), userHandler.deleteAccount);
 userRouter.del("/:id/avatar", requiresAuth(), userHandler.deleteProfileImage);
 
 // comments router
-commentRouter.get("/", requiresAuth(), commentHandler.getCommentsForStory);
+commentRouter.get("/", requiresAuth(), commentHandler.getComments);
 commentRouter.get("/:id", requiresAuth(), commentHandler.getComment);
 commentRouter.post("/", requiresAuth(), commentHandler.createComment);
+commentRouter.patch("/:id", requiresAuth(), commentHandler.editComment);
 commentRouter.patch("/:id/like", requiresAuth(), commentHandler.likeComment);
-commentRouter.patch("/:id/unlike", requiresAuth(), commentHandler.unlikeComment);
 commentRouter.patch("/:id/dislike", requiresAuth(), commentHandler.dislikeComment);
-commentRouter.patch("/:id/undo-dislike", requiresAuth(), commentHandler.undoDislikeComment);
 commentRouter.del("/:id", requiresAuth(), commentHandler.deleteComment);
 
 // images router
