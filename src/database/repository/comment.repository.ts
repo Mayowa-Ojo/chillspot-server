@@ -1,7 +1,7 @@
 import { DocumentType, mongoose } from "@typegoose/typegoose";
-import type { IRepositoryPayload } from "src/declarations";
 
-import Model, { Comment } from "../entity/comment.entity";
+import Model, { Comment } from "~database/entity/comment.entity";
+import type { IAggregationStage, IRepositoryPayload } from "~declarations/index.d";
 
 export const findOne = async (
    { condition, projection, filter }: Pick<IRepositoryPayload, "condition" | "filter" | "projection">
@@ -40,12 +40,13 @@ export const find = async (
 }
 
 export const create = async (
-   { content, author }: Pick<IRepositoryPayload, "content" | "author">
+   { content, author, story }: Pick<IRepositoryPayload, "content" | "author" | "story">
 ): Promise<DocumentType<Comment>> => {
    try {
       const instance = new Model;
       instance.content = content;
       instance.author = author;
+      instance.story = story;
 
       const comment = await instance.save();
 
@@ -88,6 +89,18 @@ export const deleteMany = async (
 ): Promise<mongoose.Query<{}>> => {
    try {
       const result = Model.deleteMany(condition);
+
+      return result;
+   } catch (err) {
+      throw new Error(err);
+   }
+}
+
+export const buildAggregationPipeline = async (
+   pipeline: IAggregationStage[]
+): Promise<DocumentType<Comment>[]> => {
+   try {
+      const result = await Model.aggregate(pipeline);
 
       return result;
    } catch (err) {
