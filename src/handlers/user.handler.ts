@@ -3,7 +3,7 @@ import codes from "http-status-codes";
 import * as userRepository from "~database/repository/user.repository";
 import * as storyRepository from "~database/repository/story.repository";
 import * as commentRepository from "~database/repository/comment.repository";
-import { generateHash, generateProfileImage, verifyPassword } from "~utils/index";
+import { castToObjectId, generateHash, generateProfileImage, verifyPassword } from "~utils/index";
 import type { AsyncHandler } from "~declarations/index.d";
 
 export const getUserProfile: AsyncHandler = async (ctx) => {
@@ -86,15 +86,45 @@ export const getFollowersForUser: AsyncHandler = async (ctx) => {
          filter: {}
       });
 
-      const followers = await userRepository.find({
-         condition: {
-            _id: {
-               $in: user.followers
+      /**
+       * we need to cast the array of ids to ObjectIds for the match stage to work
+       */
+      const userFollowers = [...user.followers].map(id => castToObjectId(`${id}`));
+
+      const followers = await userRepository.buildAggregationPipeline([
+         {
+            $match: { _id: {
+               $in: userFollowers
+            }}
+         },
+         {
+            $lookup: { from: "stories", localField: "stories", foreignField: "_id", as: "stories" }
+         },
+         {
+            $unwind: "$stories"
+         },
+         {
+            $lookup: { from: "users", localField: "stories.author", foreignField: "_id", as: "stories.author"}
+         },
+         {
+            $unwind: "$stories.author"
+         },
+         {
+            $group: { 
+               _id: "$_id",
+               stories: {$push: "$stories"},
+               firstname: {$first: "$firstname"},
+               lastname: {$first: "$lastname"},
+               username: {$first: "$username"},
+               avatar: {$first: "$avatar"},
+               bio: {$first: "$bio"},
+               followers: {$first: "$followers"}
             }
          },
-         projection: { "hash": 0 },
-         filter: {}
-      });
+         {
+            $project: { hash: 0 }
+         }
+      ]);
 
       ctx.body = {
          ok: true,
@@ -117,9 +147,8 @@ export const getFollowingForUser: AsyncHandler = async (ctx) => {
    try {
       let userId = ctx.params["id"];
 
-      if(!userId) {
-         // fetch id from current auth user
-         userId = ctx.state.user.id;
+      if(!userId || userId === "") {
+         ctx.throw(codes.BAD_REQUEST, "missing/malformed request parameter");
       }
 
       const user = await userRepository.findById({
@@ -128,15 +157,45 @@ export const getFollowingForUser: AsyncHandler = async (ctx) => {
          filter: {}
       });
 
-      const following = await userRepository.find({
-         condition: {
-            _id: {
-               $in: user.following
+      /**
+       * we need to cast the array of ids to ObjectIds for the match stage to work
+       */
+      const userFollowing = [...user.following].map(id => castToObjectId(`${id}`));
+
+      const following = await userRepository.buildAggregationPipeline([
+         {
+            $match: { _id: {
+               $in: userFollowing
+            }}
+         },
+         {
+            $lookup: { from: "stories", localField: "stories", foreignField: "_id", as: "stories" }
+         },
+         {
+            $unwind: "$stories"
+         },
+         {
+            $lookup: { from: "users", localField: "stories.author", foreignField: "_id", as: "stories.author"}
+         },
+         {
+            $unwind: "$stories.author"
+         },
+         {
+            $group: { 
+               _id: "$_id",
+               stories: {$push: "$stories"},
+               firstname: {$first: "$firstname"},
+               lastname: {$first: "$lastname"},
+               username: {$first: "$username"},
+               avatar: {$first: "$avatar"},
+               bio: {$first: "$bio"},
+               followers: {$first: "$followers"}
             }
          },
-         projection: { "hash": 0 },
-         filter: {}
-      });
+         {
+            $project: { hash: 0 }
+         }
+      ]);
 
       ctx.body = {
          ok: true,
@@ -169,15 +228,27 @@ export const getLikedStories: AsyncHandler = async (ctx) => {
          filter: {}
       });
 
-      const stories = await storyRepository.find({
-         condition: {
-            _id: {
-               $in: user.likes
-            }
+      /**
+       * we need to cast the array of ids to ObjectIds for the match stage to work
+       */
+      const userLikes = [...user.likes].map(id => castToObjectId(`${id}`));
+
+      const stories = await storyRepository.buildAggregationPipeline([
+         {
+            $match: { _id: {
+               $in: userLikes
+            }}
          },
-         projection: null,
-         filter: {}
-      });
+         {
+            $lookup: { from: "users", localField: "author", foreignField: "_id", as: "author" }
+         },
+         {
+            $unwind: "$author"
+         },
+         {
+            $project: { "author.hash": 0 }
+         }
+      ]);
 
       ctx.body = {
          ok: true,
@@ -210,22 +281,34 @@ export const getCollectionsForUser: AsyncHandler = async (ctx) => {
          filter: {}
       });
 
-      const collections = await storyRepository.find({
-         condition: {
-            _id: {
-               $in: user.collections
-            }
+      /**
+       * we need to cast the array of ids to ObjectIds for the match stage to work
+       */
+      const usercollections = [...user.collections].map(id => castToObjectId(`${id}`));
+
+      const stories = await storyRepository.buildAggregationPipeline([
+         {
+            $match: { _id: {
+               $in: usercollections
+            }}
          },
-         projection: null,
-         filter: {}
-      });
+         {
+            $lookup: { from: "users", localField: "author", foreignField: "_id", as: "author" }
+         },
+         {
+            $unwind: "$author"
+         },
+         {
+            $project: { "author.hash": 0 }
+         }
+      ]);
 
       ctx.body = {
          ok: true,
          status: codes.OK,
          message: "resources found.",
          data: {
-            collections
+            collections: stories
          }
       }
    } catch (err) {
@@ -332,7 +415,7 @@ export const followUser: AsyncHandler = async (ctx) => {
       const initiator = await userRepository.updateOne({
          condition: { _id: initiatorId },
          query: {
-            $push: {
+            $addToSet: {
                following: recepientId
             }
          },
@@ -344,11 +427,13 @@ export const followUser: AsyncHandler = async (ctx) => {
       await userRepository.updateOne({
          condition: { _id: recepientId },
          query: {
-            $push: {
+            $addToSet: {
                followers: initiatorId
             }
          },
-         options: {}
+         options: {
+            projection: { "hash": 0 }
+         }
       });
 
       ctx.body = {
@@ -382,15 +467,25 @@ export const unfollowUser: AsyncHandler = async (ctx) => {
       }
 
       const initiator = await userRepository.updateOne({
+         condition: { _id: initiatorId },
+         query: {
+            $pull: {
+               following: recepientId
+            }
+         },
+         options: {
+            projection: { "hash": 0 }
+         }
+      });
+
+      await userRepository.updateOne({
          condition: { _id: recepientId },
          query: {
             $pull: {
                followers: initiatorId
             }
          },
-         options: {
-            projection: { "hash": 0 }
-         }
+         options: {}
       });
 
       ctx.body = {
@@ -570,7 +665,9 @@ export const deleteProfileImage: AsyncHandler = async (ctx) => {
                avatar: randomImage
             }
          },
-         options: {}
+         options: {
+            projection: { hash: 0 }
+         }
       });
 
       ctx.body = {

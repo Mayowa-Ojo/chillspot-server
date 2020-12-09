@@ -1,8 +1,9 @@
 import codes from "http-status-codes";
-import type { AsyncHandler } from "../declarations/index.d";
 
 import * as storyRepository from "~database/repository/story.repository";
 import * as userRepository from "~database/repository/user.repository";
+import * as commentRepository from "~database/repository/comment.repository";
+import type { AsyncHandler } from "~declarations/index.d";
 import { castToObjectId, slugify } from "~utils/index";
 
 export const getFeedForUser: AsyncHandler = async (ctx) => {
@@ -205,15 +206,61 @@ export const likeStory: AsyncHandler = async (ctx) => {
       const storyId = ctx.params["id"];
       const userId = ctx.state.user.id;
 
-      await storyRepository.updateOne({
-         condition: { _id: storyId },
-         query: {
-            $inc: {
-               likes: 1
-            }
-         },
-         options: {}
+      let user = await userRepository.findById({
+         id: userId,
+         projection: null,
+         filter: {}
       });
+      console.log("likes", user.likes)
+      if(user.likes.includes(storyId)) {
+         await storyRepository.updateOne({
+            condition: {
+               _id: storyId
+            },
+            query: {
+               $inc: {
+                  likes: -1
+               }
+            },
+            options: {}
+         });
+
+         user = await userRepository.updateOne({
+            condition: { _id: userId },
+            query: {
+               $pull: {
+                  likes: storyId
+               }
+            },
+            options: {
+               projection: { hash: 0 }
+            }
+         });
+      } else {
+         await storyRepository.updateOne({
+            condition: {
+               _id: storyId
+            },
+            query: {
+               $inc: {
+                  likes: 1
+               }
+            },
+            options: {}
+         });
+
+         user = await userRepository.updateOne({
+            condition: { _id: userId },
+            query: {
+               $push: {
+                  likes: storyId
+               }
+            },
+            options: {
+               projection: { hash: 0 }
+            }
+         });
+      }
 
       const [story] = await storyRepository.buildAggregationPipeline([
          {
@@ -226,61 +273,6 @@ export const likeStory: AsyncHandler = async (ctx) => {
             $unwind: "$author"
          }
       ]);
-
-      const user = await userRepository.updateOne({
-         condition: { _id: userId },
-         query: {
-            $push: {
-               likes: storyId
-            }
-         },
-         options: {
-            projection: { hash: 0 }
-         }
-      });
-
-      ctx.body = {
-         ok: true,
-         status: codes.OK,
-         message: "resource updated.",
-         data: {
-            story,
-            user
-         }
-      }
-   } catch (err) {
-      if(err.status || err.statusCode) {
-         ctx.throw(err.status || err.statusCode, err.message);
-      }
-
-      ctx.throw(codes.INTERNAL_SERVER_ERROR, "something went wrong");
-   }
-}
-
-export const unlikeStory: AsyncHandler = async (ctx) => {
-   try {
-      const storyId = ctx.params["id"];
-      const userId = ctx.state.user.id;
-
-      const story = await storyRepository.updateOne({
-         condition: { _id: storyId },
-         query: {
-            $inc: {
-               likes: -1
-            }
-         },
-         options: {}
-      });
-
-      const user = await userRepository.updateOne({
-         condition: { _id: userId },
-         query: {
-            $pull: {
-               likes: storyId
-            }
-         },
-         options: {}
-      });
 
       ctx.body = {
          ok: true,
@@ -364,6 +356,49 @@ export const deleteStory: AsyncHandler = async (ctx) => {
          message: "resource deleted",
          data: {
             story
+         }
+      }
+   } catch (err) {
+      if(err.status || err.statusCode) {
+         ctx.throw(err.status || err.statusCode, err.message);
+      }
+
+      ctx.throw(codes.INTERNAL_SERVER_ERROR, "something went wrong");
+   }
+}
+
+export const getCommentsForStory: AsyncHandler = async (ctx) => {
+   try {
+      const storyId = ctx.params["id"];
+
+      if(!storyId) {
+         ctx.throw(codes.BAD_REQUEST, "missing request parameter.");
+      }
+
+      const comments = await commentRepository.buildAggregationPipeline([
+         {
+            $match: { story: castToObjectId(storyId) }
+         },
+         {
+            $sort: { createdAt: -1 }
+         },
+         {
+            $lookup: { from: "users", localField: "author", foreignField: "_id", as: "author" }
+         },
+         {
+            $unwind: "$author"
+         },
+         {
+            $project: { "author.hash": 0 }
+         }
+      ]);
+
+      ctx.body = {
+         ok: true,
+         status: codes.OK,
+         message: "resource found",
+         data: {
+            comments
          }
       }
    } catch (err) {
