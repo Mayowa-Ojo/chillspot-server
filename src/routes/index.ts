@@ -34,6 +34,7 @@ const imageRouter = new Router({
 // stories router
 storyRouter.get("/feed", requiresAuth(), storyHandler.getFeedForUser);
 storyRouter.get("/slug", requiresAuth(), storyHandler.getStoryBySlug);
+storyRouter.get("/tag", requiresAuth(), storyHandler.getStoriesByTag);
 storyRouter.get("/:id", requiresAuth(), storyHandler.getStory);
 storyRouter.get("/:id/comments", requiresAuth(), storyHandler.getCommentsForStory);
 storyRouter.get("/search", storyHandler.searchStories);
