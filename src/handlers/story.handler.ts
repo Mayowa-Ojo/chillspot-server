@@ -14,8 +14,55 @@ export const getFeedForUser: AsyncHandler = async (ctx) => {
          },
          {
             $unwind: "$author"
+         },
+         {
+            $project: { hash: 0 }
          }
       ]);
+
+      ctx.body = {
+         ok: true,
+         status: codes.OK,
+         message: "resources found",
+         data: {
+            stories
+         }
+      }
+   } catch (err) {
+      if(err.status || err.statusCode) {
+         ctx.throw(err.status || err.statusCode, err.message);
+      }
+
+      ctx.throw(codes.INTERNAL_SERVER_ERROR, "something went wrong");
+   }
+}
+
+export const getStoriesByTag: AsyncHandler = async (ctx) => { // </stories/tag?q=beach>
+   try {
+      const tag = ctx.request.query["q"];
+
+      if(!tag || tag == "") {
+         ctx.throw(codes.PRECONDITION_FAILED, "missing/malformed request query.");
+      }
+
+      const stories = await storyRepository.buildAggregationPipeline([
+         {
+            $match: {
+               tags: {
+                  $in: [tag]
+               }
+            }
+         },
+         {
+            $lookup: { from: "users", localField: "author", foreignField: "_id", as: "author"}
+         },
+         {
+            $unwind: "$author"
+         },
+         {
+            $project: { "author.hash": 0 }
+         }
+      ])
 
       ctx.body = {
          ok: true,
