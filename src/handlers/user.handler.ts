@@ -71,6 +71,35 @@ export const getUserByUsername: AsyncHandler = async (ctx) => {
    }
 }
 
+export const getSuggestedFollowers: AsyncHandler = async (ctx) => {
+   try {
+      const users = await userRepository.find({
+         condition: {
+            $where: "this.stories.length > 3"
+         },
+         projection: null,
+         filter: {
+            limit: 3
+         }
+      });
+
+      ctx.body = {
+         ok: true,
+         status: codes.OK,
+         message: "resources found.",
+         data: {
+            users
+         }
+      }
+   } catch (err) {
+      if(err.status || err.statusCode) {
+         ctx.throw(err.status || err.statusCode, err.message);
+      }
+
+      ctx.throw(codes.INTERNAL_SERVER_ERROR, "something went wrong.");
+   }
+}
+
 export const getFollowersForUser: AsyncHandler = async (ctx) => {
    try {
       let userId = ctx.params["id"];
