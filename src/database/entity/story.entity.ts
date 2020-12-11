@@ -1,4 +1,4 @@
-import { Prop, getModelForClass, modelOptions, mongoose, Severity } from "@typegoose/typegoose";
+import { Prop, getModelForClass, modelOptions, mongoose, Severity, index } from "@typegoose/typegoose";
 
 import type { IImage } from "~declarations/index.d";
 
@@ -6,6 +6,7 @@ import type { IImage } from "~declarations/index.d";
    schemaOptions: { timestamps: true, collection: "stories"},
    options: { allowMixed: Severity.ALLOW }
 })
+@index({ title: "text", location: "text", tags: "text" })
 export class Story {
    @Prop()
    public title!: string
