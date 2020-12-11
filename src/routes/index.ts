@@ -35,9 +35,9 @@ const imageRouter = new Router({
 storyRouter.get("/feed", requiresAuth(), storyHandler.getFeedForUser);
 storyRouter.get("/slug", requiresAuth(), storyHandler.getStoryBySlug);
 storyRouter.get("/tag", requiresAuth(), storyHandler.getStoriesByTag);
+storyRouter.get("/search", requiresAuth(), storyHandler.searchStories);
 storyRouter.get("/:id", requiresAuth(), storyHandler.getStory);
 storyRouter.get("/:id/comments", requiresAuth(), storyHandler.getCommentsForStory);
-storyRouter.get("/search", storyHandler.searchStories);
 storyRouter.patch("/:id/like", requiresAuth(), storyHandler.likeStory);
 storyRouter.patch("/:id/save", requiresAuth(), storyHandler.addStoryToCollection);
 storyRouter.post("/", requiresAuth(), storyHandler.createStory);
@@ -49,6 +49,7 @@ authRouter.post("/signup", authHandler.userSignup);
 
 // users router
 userRouter.get("/username", requiresAuth(), userHandler.getUserByUsername);
+userRouter.get("/follow-suggestions", requiresAuth(), userHandler.getSuggestedFollowers);
 userRouter.get("/:id", requiresAuth(), userHandler.getUserProfile);
 userRouter.get("/:id/followers", requiresAuth(), userHandler.getFollowersForUser);
 userRouter.get("/:id/following", requiresAuth(), userHandler.getFollowingForUser);
