@@ -97,4 +97,4 @@ export const castToObjectId = (id: string) => {
    return mongoose.Types.ObjectId(id);
 }
 
-export const slugify = (s: string): string => `${nanoid(10)}-${s.split(" ").join("-")}`;
+export const slugify = (s: string): string => `${nanoid(10)}-${s.replace("&", "").split(" ").join("-")}`;
