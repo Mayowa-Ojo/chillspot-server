@@ -23,11 +23,12 @@
          "~declarations/*": ["src/declarations/*"],
          "~middleware/*": ["src/middleware/*"],
          "~handlers/*": ["src/handlers/*"],
-      }
+      },
+      "types": ["jest", "node"]
    },
    "lib": [
       "es2015"
    ],
-   "include": ["./src/**/*"],
+   "include": ["./src/**/*", "./__tests__/*"],
    "exclude": ["node_modules"]
 }
