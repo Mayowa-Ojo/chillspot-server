@@ -6,8 +6,28 @@ import * as commentRepository from "~database/repository/comment.repository";
 import type { AsyncHandler } from "~declarations/index.d";
 import { castToObjectId, slugify } from "~utils/index";
 
-export const getFeedForUser: AsyncHandler = async (ctx) => {
+export const getFeedForUser: AsyncHandler = async (ctx) => { // </stories/feed?sort=popular&limit=5>
    try {
+      let sort = ctx.request.query["sort"];
+      let limit = ctx.request.query["limit"];
+
+      if(!limit || limit === "") limit = 100;
+
+      switch (sort) {
+         case "popular":
+            sort = "views"
+            break;
+         case "recent":
+            sort = "createdAt";
+            break;
+         case "approval":
+            sort = "likes";
+            break;
+         default:
+            sort = "createdAt";
+            break;
+      }
+
       const stories = await storyRepository.buildAggregationPipeline([
          {
             $lookup: { from: "users", localField: "author", foreignField: "_id", as: "author"}
@@ -17,6 +37,12 @@ export const getFeedForUser: AsyncHandler = async (ctx) => {
          },
          {
             $project: { hash: 0 }
+         },
+         {
+            $limit: Number(limit)
+         },
+         {
+            $sort: { [sort]: -1 }
          }
       ]);
 
@@ -62,7 +88,7 @@ export const getStoriesByTag: AsyncHandler = async (ctx) => { // </stories/tag?q
          {
             $project: { "author.hash": 0 }
          }
-      ])
+      ]);
 
       ctx.body = {
          ok: true,
@@ -89,15 +115,30 @@ export const searchStories: AsyncHandler = async (ctx) => {
          ctx.throw(codes.PRECONDITION_FAILED, "missing/malformed request query.");
       }
 
-      const stories = await storyRepository.find({
-         condition: {
-            tags: {
-               $in: [query]
+      const stories = await storyRepository.buildAggregationPipeline([
+         {
+            $match: {
+               $text: {
+                  $search: query
+               }
             }
          },
-         projection: null,
-         filter: {} // limit, sort
-      });
+         {
+            $lookup: { from: "users", localField: "author", foreignField: "_id", as: "author"}
+         },
+         {
+            $unwind: "$author"
+         },
+         {
+            $addFields: { score: { $meta: "textScore"}}
+         },
+         {
+            $sort: { score: { $meta: "textScore"}}
+         },
+         {
+            $project: { "author.hash": 0 }
+         }
+      ]);
 
       ctx.body = {
          ok: true,
