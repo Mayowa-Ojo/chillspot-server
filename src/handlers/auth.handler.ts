@@ -11,7 +11,7 @@ export const userLogin = async (ctx: Context) => {
 
       let isValid = requiredFields.every((field) => field in requestBody);
       if(!isValid) {
-         ctx.throw(codes.PRECONDITION_FAILED, "missing fields");
+         ctx.throw(codes.PRECONDITION_FAILED, "missing/malformed field(s) in request body");
       }
 
       const { email, password } = requestBody;
@@ -38,13 +38,18 @@ export const userLogin = async (ctx: Context) => {
       ctx.body = {
          ok: true,
          status: codes.OK,
+         message: "login successful",
          data: {
             user,
             token
          }
       }
    } catch (err) {
-      ctx.throw(404, err.message);
+      if(!err.status) {
+         err.status = codes.INTERNAL_SERVER_ERROR;
+         err.message = "something went wrong";
+      }
+      ctx.throw(err.status, err.message);
    }
 }
 
@@ -55,7 +60,7 @@ export const userSignup = async (ctx: Context) => {
 
       const isValid = requiredFields.every((field) => field in requestBody);
       if(!isValid) {
-         ctx.throw(codes.PRECONDITION_FAILED, "missing fields");
+         ctx.throw(codes.PRECONDITION_FAILED, "missing/malformed field(s) in request body");
       }
 
       const { firstname, lastname, email, password } = requestBody;
