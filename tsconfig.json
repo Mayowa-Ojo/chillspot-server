@@ -22,7 +22,7 @@
          "~config/*": ["src/config/*"],
          "~declarations/*": ["src/declarations/*"],
          "~middleware/*": ["src/middleware/*"],
-         "~handlers/*": ["src/handlers/*"],
+         "~handlers/*": ["src/handlers/*"]
       },
       "types": ["jest", "node"]
    },
