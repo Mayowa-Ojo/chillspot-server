@@ -10,8 +10,8 @@
       "build": "rimraf ./dist && tsc --project tsconfig.json && tscpaths -p tsconfig.json -s ./src -o ./dist",
       "test": "cross-env NODE_ENV=test jest --detectOpenHandles"
    },
-   "homepage": "https://github.com/Mayowa-Ojo/chillspot/server/#README",
-   "repository": "github:Mayowa-Ojo/chillspot/server",
+   "homepage": "https://github.com/Mayowa-Ojo/chillspot-server/#README",
+   "repository": "github:Mayowa-Ojo/chillspot-server",
    "keywords": [
       "typescript",
       "koa",
