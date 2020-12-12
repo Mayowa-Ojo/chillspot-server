@@ -1,11 +1,11 @@
 import request from "supertest";
 import type { Server } from "http";
+import type { DocumentType } from "@typegoose/typegoose";
 
 import app from "../src/app";
 import * as userRepository from "~database/repository/user.repository";
 import * as utils from "~utils/index";
 import { User } from "~database/entity/user.entity";
-import type { DocumentType } from "@typegoose/typegoose";
 
 const BASE_URL = "/api/v1/auth";
 
@@ -96,7 +96,7 @@ describe("auth", () => {
          });
    });
 
-   it("should return an unauthorized error response if wrong password is provided", async (done) => {
+   it("should return a precondition failed error response if request body has missing field", async (done) => {
       const payload = {
          email: "jonny@hey.com",
       }

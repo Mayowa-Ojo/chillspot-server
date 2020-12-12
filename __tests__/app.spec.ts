@@ -3,7 +3,7 @@ import type { Server } from "http";
 
 import app from "../src/app";
 
-describe("sanity check", () => {
+describe("environment check", () => {
    test("NODE_ENV should be set to 'test'", () => {
       expect(process.env.NODE_ENV).toEqual("test");
    });
