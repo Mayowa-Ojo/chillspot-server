@@ -4,9 +4,9 @@
    "description": "server for chillspot web app",
    "main": "dist/server.js",
    "scripts": {
-      "start": "npm run build && node dist/server.js",
+      "start": "NODE_ENV='production' && node dist/server.js",
       "start:dev": "nodemon",
-      "start:prod": "npm run build && node dist/server.js",
+      "start:prod": "npm run build && npm start",
       "build": "rimraf ./dist && tsc --project tsconfig.json && tscpaths -p tsconfig.json -s ./src -o ./dist",
       "test": "cross-env NODE_ENV=test jest --detectOpenHandles"
    },
