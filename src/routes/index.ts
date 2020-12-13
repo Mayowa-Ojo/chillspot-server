@@ -32,7 +32,7 @@ const imageRouter = new Router({
 });
 
 // stories router
-storyRouter.get("/feed", requiresAuth(), storyHandler.getFeedForUser);
+storyRouter.get("/feed", storyHandler.getFeedForUser);
 storyRouter.get("/slug", requiresAuth(), storyHandler.getStoryBySlug);
 storyRouter.get("/tag", requiresAuth(), storyHandler.getStoriesByTag);
 storyRouter.get("/search", requiresAuth(), storyHandler.searchStories);
