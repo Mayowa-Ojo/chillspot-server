@@ -1,6 +1,6 @@
 
 pull:
-	git pull origin staging && npm run build && pm2 restart chillspot-server
+	git pull origin master && npm run build && pm2 restart chillspot-server
 
 fetch:
 	git fetch --all && git reset --hard origin/master
