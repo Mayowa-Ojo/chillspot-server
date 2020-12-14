@@ -1,6 +1,6 @@
 # Chillspot.
 
-> Backend repository for the chillsot web app | [postman documentation]
+> Backend repository for the chillsot web app | [postman documentation]()
 
 ### Introduction
 Chillspot is a side project I developed for learning purposes. Its design is influenced by [dribbble](https://dribbble.com) and it serves as a platform/community where people can share their travel experiences. This is the backend repository built with koa+typescript and deployed on digital ocean. The [front-end repository](https://github.com/Mayowa-Ojo/chillspot-client) is hosted separately.
@@ -19,9 +19,9 @@ Implemented :heavy_check_mark:
    - Edit profile/Account settings
 
 Roadmap :construction:
-   - Reponsive UI
    - Social auth [Google/Twitter]
    - Create shareable links to stories
+   - Write more extensive test suites
 
 ### Development
 Requirements
@@ -34,6 +34,9 @@ $ git clone https://github.com/Mayowa-Ojo/chillspot-server.git <folder>
 $ npm install
 $ touch .env.development # check .env.example for required variables
 $ npm start
+# running tests
+$ npm test
+$ npm test -- -t <target> # run only tests that match
 ```
 
 ### Routes
