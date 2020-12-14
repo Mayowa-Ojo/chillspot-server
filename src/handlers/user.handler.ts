@@ -74,9 +74,7 @@ export const getUserByUsername: AsyncHandler = async (ctx) => {
 export const getSuggestedFollowers: AsyncHandler = async (ctx) => {
    try {
       const users = await userRepository.find({
-         condition: {
-            $where: "this.stories.length > 3"
-         },
+         condition: { "stories.2": { $exists: true }},
          projection: null,
          filter: {
             limit: 3
