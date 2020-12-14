@@ -49,7 +49,7 @@ authRouter.post("/signup", authHandler.userSignup);
 
 // users router
 userRouter.get("/username", requiresAuth(), userHandler.getUserByUsername);
-userRouter.get("/follow-suggestions", requiresAuth(), userHandler.getSuggestedFollowers);
+userRouter.get("/follow-suggestions", userHandler.getSuggestedFollowers);
 userRouter.get("/:id", requiresAuth(), userHandler.getUserProfile);
 userRouter.get("/:id/followers", requiresAuth(), userHandler.getFollowersForUser);
 userRouter.get("/:id/following", requiresAuth(), userHandler.getFollowingForUser);
