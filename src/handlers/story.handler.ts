@@ -1,10 +1,12 @@
 import codes from "http-status-codes";
+import type { DocumentType } from "@typegoose/typegoose";
 
 import * as storyRepository from "~database/repository/story.repository";
 import * as userRepository from "~database/repository/user.repository";
 import * as commentRepository from "~database/repository/comment.repository";
 import type { AsyncHandler } from "~declarations/index.d";
 import { castToObjectId, slugify } from "~utils/index";
+import { Story } from "~database/entity/story.entity";
 
 export const getFeedForUser: AsyncHandler = async (ctx) => { // </stories/feed?sort=popular&limit=5>
    try {
@@ -115,7 +117,9 @@ export const searchStories: AsyncHandler = async (ctx) => {
          ctx.throw(codes.PRECONDITION_FAILED, "missing/malformed request query.");
       }
 
-      const stories = await storyRepository.buildAggregationPipeline([
+      let stories: DocumentType<Story>[];
+
+      stories = await storyRepository.buildAggregationPipeline([
          {
             $match: {
                $text: {
@@ -139,6 +143,27 @@ export const searchStories: AsyncHandler = async (ctx) => {
             $project: { "author.hash": 0 }
          }
       ]);
+
+      if(stories.length < 1) {
+         stories = await storyRepository.buildAggregationPipeline([
+            {
+               $match: {
+                  tags: {
+                     $in: [query]
+                  }
+               }
+            },
+            {
+               $lookup: { from: "users", localField: "author", foreignField: "_id", as: "author"}
+            },
+            {
+               $unwind: "$author"
+            },
+            {
+               $project: { "author.hash": 0 }
+            }
+         ]);
+      }
 
       ctx.body = {
          ok: true,
