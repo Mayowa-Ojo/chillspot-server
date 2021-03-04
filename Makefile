@@ -18,4 +18,4 @@ delete:
 	pm2 delete chillspot-server
 
 logs:
-	pm2 logs
+	heroku logs --tail
