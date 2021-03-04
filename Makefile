@@ -5,6 +5,9 @@ pull:
 fetch:
 	git fetch --all && git reset --hard origin/master
 
+push:
+	git push heroku master
+
 restart:
 	pm2 restart chillspot-server
 
